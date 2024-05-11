@@ -77,15 +77,9 @@ def store_file(preview_file, destination):
         destination_dir = os.path.join(destination_dir, selected_dir_value)
         curr_depth = get_immediate_subdirectories(destination_dir)
 
-    save_dir = os.path.join(target_dir, "SAVE")
-    os.makedirs(save_dir, exist_ok=True)
-    shutil.copy(source_path, save_dir)
+    destination_file = os.path.join(destination_dir, preview_file.replace(' ', '_'))
+    copy_file(source_path, destination_file)
 
-    destination_file = os.path.join(destination_dir, f"{preview_file.replace(' ', '_').rstrip('.pdf')}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf")
-    shutil.copy(source_path, destination_file)
-
-    output_box.insert(END, f"File {os.path.basename(preview_file)} moded to {destination_file}\n")
-    output_box.see(END)
 
 def preview_pdf(file):
     global current_previewed_file
@@ -106,18 +100,23 @@ def preview_pdf(file):
 
 def delete_file(file):
     destination_dir = os.path.join(target_dir, "DELETE")
-
     os.makedirs(destination_dir, exist_ok=True)
-
-    save_dir = os.path.join(input_dir, "save")
-    os.makedirs(save_dir, exist_ok=True)
-    shutil.copy(file, save_dir)
-
     destination_file = os.path.join(destination_dir, os.path.basename(file))
-    shutil.copy(file, destination_file)
+    copy_file(os.path.join(input_dir, file), destination_file)
 
-    output_box.insert(END, f"File {os.path.basename(file)} deleted (moved to DELETE folder)\n")
+def copy_file(in_path, out_path):
+
+    save_path = os.path.join(target_dir, "SAVE")
+    os.makedirs(save_path, exist_ok=True)
+    shutil.copy(in_path, save_path)
+
+    destination_file = f"{out_path[:-4]}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf"
+    shutil.copy(in_path, destination_file)
+
+    print(destination_file)
+    output_box.insert(END, f"{os.path.basename(in_path)} --> {destination_file[len(target_dir)+1:]}\n")
     output_box.see(END)
+
 
 def refresh_list():
     listbox.delete(0, END)
