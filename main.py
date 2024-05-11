@@ -1,5 +1,5 @@
+from datetime import datetime
 from tkinter import *
-from tkinter import filedialog, messagebox, simpledialog
 import os
 import shutil
 import fitz  
@@ -34,7 +34,7 @@ def store_file(preview_file, destination):
         subdirectory_dialog.destroy()
 
     exit_flag = False
-
+    source_path = os.path.join(input_dir, preview_file)
     destination_dir = os.path.join(target_dir, destination)
     curr_depth = get_immediate_subdirectories(destination_dir)
 
@@ -77,14 +77,14 @@ def store_file(preview_file, destination):
         destination_dir = os.path.join(destination_dir, selected_dir_value)
         curr_depth = get_immediate_subdirectories(destination_dir)
 
-    save_dir = os.path.join(input_dir, "SAVE")
+    save_dir = os.path.join(target_dir, "SAVE")
     os.makedirs(save_dir, exist_ok=True)
-    shutil.copy(preview_file, save_dir)
+    shutil.copy(source_path, save_dir)
 
-    destination_file = os.path.join(destination_dir, preview_file)
-    shutil.copy(os.path.join(input_dir, preview_file), destination_file)
+    destination_file = os.path.join(destination_dir, f"{preview_file.replace(' ', '_').rstrip('.pdf')}_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.pdf")
+    shutil.copy(source_path, destination_file)
 
-    output_box.insert(END, f"File {os.path.basename(preview_file)} stored in {destination_file}\n")
+    output_box.insert(END, f"File {os.path.basename(preview_file)} moded to {destination_file}\n")
     output_box.see(END)
 
 def preview_pdf(file):
@@ -105,7 +105,7 @@ def preview_pdf(file):
     preview_label.image = photo
 
 def delete_file(file):
-    destination_dir = os.path.join(input_dir, "DELETE")
+    destination_dir = os.path.join(target_dir, "DELETE")
 
     os.makedirs(destination_dir, exist_ok=True)
 

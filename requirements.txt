@@ -1,0 +1,4 @@
+fitz~=0.0.1.dev2
+Pillow~=9.5.0
+PyMuPDF==1.24.3
+PyMuPDFb==1.24.3
